@@ -58,7 +58,10 @@ type LazyLoadEntry = [ HTMLImageElement, SlideComponent, HTMLSpanElement ];
 export function LazyLoad( Splide: Splide, Components: Components, options: Options ): LazyLoadComponent {
   const { on, off, bind, emit } = EventInterface( Splide );
   const isSequential = options.lazyLoad === 'sequential';
-  const events       = [ EVENT_MOUNTED, EVENT_REFRESH, EVENT_MOVED, EVENT_SCROLLED ];
+  const isInteraction = options.lazyLoad === 'interaction';
+  const triggerEvents = [ EVENT_MOUNTED, EVENT_REFRESH ];
+  const interactionLoadEvents = [ EVENT_MOVED, EVENT_SCROLLED ];
+  const loadEvents = interactionLoadEvents.concat( triggerEvents );
 
   /**
    * Stores data of images.
@@ -72,7 +75,12 @@ export function LazyLoad( Splide: Splide, Components: Components, options: Optio
     if ( options.lazyLoad ) {
       init();
       on( EVENT_REFRESH, init );
-      isSequential || on( events, observe );
+      if( isInteraction ) {
+        on( interactionLoadEvents, startLoading );
+      }
+      else {
+        isSequential || on( loadEvents, observe );
+      }
     }
   }
 
@@ -102,6 +110,12 @@ export function LazyLoad( Splide: Splide, Components: Components, options: Optio
     isSequential && loadNext();
   }
 
+  function startLoading(): void {
+    off( interactionLoadEvents );
+    on( loadEvents, observe );
+    observe();
+  }
+
   /**
    * Checks how close each image is from the active slide, and determines whether to start loading or not.
    * The last `+1` is for the current page.
@@ -112,7 +126,7 @@ export function LazyLoad( Splide: Splide, Components: Components, options: Optio
       return data[ 1 ].isWithin( Splide.index, distance ) ? load( data ) : true;
     } );
 
-    entries.length || off( events );
+    entries.length || off( loadEvents );
   }
 
   /**

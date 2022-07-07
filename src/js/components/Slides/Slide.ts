@@ -256,6 +256,10 @@ export function Slide( Splide: Splide, index: number, slideIndex: number, slide:
     const left      = resolve( 'left', true );
     const right     = resolve( 'right', true );
 
+    // Check to makse sure the track is actually visible first
+    if( trackRect[ left ] === 0 && trackRect[ right ] === 0 && trackRect[ 'width' ] === 0, trackRect[ 'height' ] === 0 )
+      return false;
+
     return floor( trackRect[ left ] ) <= ceil( slideRect[ left ] )
       && floor( slideRect[ right ] ) <= ceil( trackRect[ right ] );
   }
