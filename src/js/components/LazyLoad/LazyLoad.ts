@@ -77,6 +77,7 @@ export function LazyLoad( Splide: Splide, Components: Components, options: Optio
       on( EVENT_REFRESH, init );
       if( isInteraction ) {
         on( interactionLoadEvents, startLoading );
+        loadNext();
       }
       else {
         isSequential || on( loadEvents, observe );
