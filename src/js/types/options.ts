@@ -86,7 +86,7 @@ export interface Options extends ResponsiveOptions {
    * - `'nearby'`: Starts loading only images around the active slide (page)
    * - `'sequential'`: Loads images sequentially
    */
-  lazyLoad?: boolean | 'nearby' | 'sequential';
+  lazyLoad?: boolean | 'nearby' | 'sequential' | 'interaction';
 
   /**
    * Determine how many pages (not slides) around the active slide should be loaded beforehand.
